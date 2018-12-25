@@ -7,15 +7,33 @@
 //
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        FirebaseApp.configure()
+        
+        if UserDefaults.standard.object(forKey: "UID") == nil {
+            let user = UIDevice.current.identifierForVendor!.uuidString
+            let dict = ["userUid": user]
+            DataService.instance.createFirebaseUser(uid: user, user: dict)
+            UserDefaults.standard.set(user, forKey: "UID")
+        }
+        
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.makeKeyAndVisible()
+        
+        window?.rootViewController = StartViewController()
+        
+        if UIApplication.shared.backgroundRefreshStatus == .available {
+            print("Carl: Background updates are available for the app.")
+        }
+        
         return true
     }
 
@@ -25,6 +43,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+        application.beginBackgroundTask(withName: "") {
+        }
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }

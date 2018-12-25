@@ -1,5 +1,5 @@
 //
-//  TopMenuCell.swift
+//  MenuCell.swift
 //  BizTrip
 //
 //  Created by Carl Henningsson on 4/26/18.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TopMenuCell: UICollectionViewCell {
+class MenuCell: UICollectionViewCell {
     var menu: Menu? {
         didSet {
             titel.text = menu?.titel
@@ -17,7 +17,7 @@ class TopMenuCell: UICollectionViewCell {
     
     let titel: UILabel = {
         let t = UILabel()
-        t.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        t.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         t.textColor = .white
         t.textAlignment = .left
         
@@ -27,7 +27,7 @@ class TopMenuCell: UICollectionViewCell {
     private func setupCV() {
         addSubview(titel)
         
-        _ = titel.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: nil, topConstant: 0, leftConstant: 10, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
+        _ = titel.anchor(topAnchor, left: leftAnchor, bottom: bottomAnchor, right: nil, topConstant: 0, leftConstant: 30, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
     }
     
     override init(frame: CGRect) {

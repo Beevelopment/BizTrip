@@ -9,5 +9,9 @@
 import UIKit
 
 class Menu: NSObject {
-
+    let titel: String
+    
+    init(titel: String) {
+        self.titel = titel
+    }
 }

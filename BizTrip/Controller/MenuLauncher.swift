@@ -11,6 +11,7 @@ import UIKit
 class MenuLauncher: NSObject, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     let cellId = "cellId"
+    let blurEffect = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     
     let blackView: UIView = {
         let bV = UIView()
@@ -20,99 +21,69 @@ class MenuLauncher: NSObject, UICollectionViewDelegate, UICollectionViewDataSour
         return bV
     }()
     
-    let settingsView: UIView = {
-        let sV = UIView()
-        sV.backgroundColor = MAIN_GREEN_COLOR
+    let menus: [Menu] = {
+        let privacy = Menu(titel: "Privacy Policy")
+        let guide = Menu(titel: "Feedback")
+        let share = Menu(titel: "Share BizTrip")
+        let cancel = Menu(titel: "Cancel")
         
-        return sV
+        var menuArray = [privacy, guide, share, cancel]
+        
+        return menuArray
     }()
-    
-//    let applicationGuide: UIButton = {
-//        let guide = UIButton(type: .system)
-//        guide.setTitle("App Guide", for: .normal)
-//        guide.tintColor = .white
-//        guide.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-//
-//        return guide
-//    }()
-    
-//    let privacyPolicy: UIButton = {
-//        let privacy = UIButton(type: .system)
-//        privacy.setTitle("Privacy Policy", for: .normal)
-//        privacy.tintColor = .white
-//        privacy.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-//
-//        return privacy
-//    }()
-//
-//    let dismissMenu: UIButton = {
-//        let disMenu = UIButton(type: .system)
-//        disMenu.setTitle("Cancel", for: .normal)
-//        disMenu.tintColor = .white
-//        disMenu.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-//
-//        return disMenu
-//    }()
     
     let topCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 0
+        layout.sectionInset.top = 100
         
         let topCV = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        topCV.backgroundColor = MAIN_GREEN_COLOR
+        topCV.backgroundColor = UIColor(patternImage: UIImage(named: "bg")!)
         
         return topCV
-    }()
-    
-    let bottomCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 0
-        
-        let bottomCV = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        bottomCV.backgroundColor = MAIN_GREEN_COLOR
-        
-        return bottomCV
     }()
     
     var startViewController: StartViewController?
     
     func showMenu() {
         if let window = UIApplication.shared.keyWindow {
+            
             let sViewWidth = window.frame.width / 2
             let windowHeight = window.frame.height
             
-            window.addSubview(blackView)
-            window.addSubview(settingsView)
+            window.addSubview(blurEffect)
             window.addSubview(topCollectionView)
-            window.addSubview(bottomCollectionView)
             
-            _ = blackView.anchor(window.topAnchor, left: window.leftAnchor, bottom: window.bottomAnchor, right: window.rightAnchor, topConstant: 0, leftConstant: 0, bottomConstant: 0, rightConstant: 0, widthConstant: 0, heightConstant: 0)
-            topCollectionView.frame = CGRect(x: -sViewWidth, y: 0, width: sViewWidth, height: windowHeight / 2)
-            bottomCollectionView.frame = CGRect(x: -sViewWidth, y: windowHeight / 2, width: sViewWidth, height: windowHeight / 2)
+            blurEffect.frame = window.bounds
+            blurEffect.alpha = 0
+            blurEffect.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handelDismiss)))
             
-            blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handelDismiss)))
-//            applicationGuide.addTarget(self, action: #selector(guidePressed), for: .touchUpInside)
-//            privacyPolicy.addTarget(self, action: #selector(privacyPressed), for: .touchUpInside)
-//            dismissMenu.addTarget(self, action: #selector(cancelPressed), for: .touchUpInside)
+            topCollectionView.frame = CGRect(x: -sViewWidth, y: -50, width: sViewWidth, height: windowHeight + 50)
             
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-                self.blackView.alpha = 1
-                self.topCollectionView.frame = CGRect(x: 0, y: 0, width: sViewWidth, height: windowHeight / 2)
-                self.bottomCollectionView.frame = CGRect(x: 0, y: windowHeight / 2, width: sViewWidth, height: windowHeight / 2)
+                self.blurEffect.alpha = 0.7
+                self.topCollectionView.frame = CGRect(x: 0, y: -50, width: sViewWidth, height: windowHeight + 50)
             }, completion: nil)
         }
     }
     
-    @objc func guidePressed() {
+    @objc func test() {
+        print("carl ca")
     }
     
-    @objc func privacyPressed() {
+    func privacyPressed() {
         handelDismiss()
         startViewController?.openTermsController()
     }
     
-    @objc func cancelPressed() {
+    func feedbackPressed() {
         handelDismiss()
+        startViewController?.openFeedbackLauncher()
+    }
+    
+    func sharePressed() {
+        handelDismiss()
+        startViewController?.shareApplication()
     }
     
     @objc func handelDismiss() {
@@ -121,16 +92,37 @@ class MenuLauncher: NSObject, UICollectionViewDelegate, UICollectionViewDataSour
             let windowHeight = window.frame.height
             
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-                self.blackView.alpha = 0
-                self.settingsView.frame = CGRect(x: -sViewWidth, y: 0, width: sViewWidth, height: windowHeight)
-                self.topCollectionView.frame = CGRect(x: -sViewWidth, y: 0, width: sViewWidth, height: windowHeight / 2)
-                self.bottomCollectionView.frame = CGRect(x: -sViewWidth, y: windowHeight / 2, width: sViewWidth, height: windowHeight / 2)
+                self.blurEffect.alpha = 0
+                self.topCollectionView.frame = CGRect(x: -sViewWidth, y: -50, width: sViewWidth, height: windowHeight + 50)
             }, completion: nil)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return menus.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let menu = menus[indexPath.item]
+        let cell = topCollectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! MenuCell
+        
+        cell.menu = menu
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let menu = menus[indexPath.item]
+        
+        if menu.titel == "Privacy Policy" {
+            privacyPressed()
+        } else if menu.titel == "Feedback" {
+            feedbackPressed()
+        } else if menu.titel == "Share BizTrip" {
+            sharePressed()
+        } else if menu.titel == "Cancel" {
+            handelDismiss()
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -141,10 +133,6 @@ class MenuLauncher: NSObject, UICollectionViewDelegate, UICollectionViewDataSour
         super.init()
         topCollectionView.delegate = self
         topCollectionView.dataSource = self
-        topCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
-        
-        bottomCollectionView.delegate = self
-        bottomCollectionView.dataSource = self
-        bottomCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
+        topCollectionView.register(MenuCell.self, forCellWithReuseIdentifier: cellId)
     }
 }

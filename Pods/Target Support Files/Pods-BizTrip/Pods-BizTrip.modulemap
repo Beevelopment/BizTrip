@@ -1,0 +1,6 @@
+framework module Pods_BizTrip {
+  umbrella header "Pods-BizTrip-umbrella.h"
+
+  export *
+  module * { export * }
+}
